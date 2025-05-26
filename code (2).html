@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gamers Hub - Experiencia Única</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
+
+  /* CSS Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    background: #0d0d0d;
+    font-family: 'Roboto', sans-serif;
+    color: #ccc;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* Animated starfield background */
+  body {
+    position: relative;
+    overflow-x: hidden;
+  }
+  canvas#starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    background: #0d0d0d;
+  }
+
+  /* Header with glitch effect */
+  header {
+    position: relative;
+    background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+    padding: 2rem 2rem 2.5rem 2rem;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    color: #00ffea;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    user-select: none;
+    text-shadow:
+      0 0 8px #00ffe3,
+      0 0 15px #00ffea,
+      0 0 20px #00ffea,
+      0 0 30px #00ffe3,
+      0 0 50px #00ffec,
+      0 0 80px #00ffec;
+    overflow: visible;
+    z-index: 1000;
+  }
+  /* Glitch layers */
+  header::before,
+  header::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    color: #00ffea;
+    overflow: hidden;
+    clip: rect(0, 900px, 0, 0);
+    animation: glitch 2s infinite;
+  }
+  header::before {
+    left: calc(50% + 2px);
+    text-shadow: -2px 0 red;
+    animation-delay: 0.25s;
+  }
+  header::after {
+    left: calc(50% - 2px);
+    text-shadow: -2px 0 cyan;
+    animation-delay: 0.5s;
+  }
+  @keyframes glitch {
+    0% {
+      clip: rect(44px, 9999px, 56px, 0);
+      transform: translate(-2px, -2px);
+    }
+    20% {
+      clip: rect(12px, 9999px, 100px, 0);
+      transform: translate(2px, 2px);
+    }
+    40% {
+      clip: rect(82px, 9999px, 90px, 0);
+      transform: translate(-2px, 0);
+    }
+    60% {
+      clip: rect(60px, 9999px, 80px, 0);
+      transform: translate(0, 2px);
+    }
+    80% {
+      clip: rect(44px, 9999px, 56px, 0);
+      transform: translate(2px, -2px);
+    }
+    100% {
+      clip: rect(12px, 9999px, 100px, 0);
+      transform: translate(-2px, 2px);
+    }
+  }
+
+  /* Navigation */
+  nav {
+    background: #121212dd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    font-family: 'Orbitron', sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1101;
+    border-bottom: 2px solid #00ffec;
+    backdrop-filter: blur(4px);
+  }
+  nav .logo {
+    color: #00ffec;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    user-select: none;
+    cursor: default;
+    text-shadow: 0 0 6px #00ffe3;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+  }
+  nav ul li {
+    user-select: none;
+  }
+  nav ul li a {
+    text-decoration: none;
+    color: #00ffec;
+    font-size: 1rem;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    box-shadow:
+      inset 0 0 5px #00ffee88;
+    transition:
+      all 0.3s ease,
+      box-shadow 0.4s ease-in-out;
+    position: relative;
+    overflow: hidden;
+  }
+  nav ul li a:hover,
+  nav ul li a.active {
+    background: linear-gradient(270deg, #00ffe3, #00ffea, #00ffec, #00ffe3);
+    animation: neonGlow 3s ease infinite;
+    box-shadow:
+      0 0 15px #00ffec,
+      0 0 30px #00ffec88;
+    color: #000;
+  }
+  @keyframes neonGlow {
+    0%,100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Hamburger for mobile */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+  }
+  .hamburger div {
+    width: 28px;
+    height: 3.5px;
+    background-color: #00ffec;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+  .hamburger.active div:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger.active div:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.active div:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+  @media (max-width: 768px) {
+    nav ul {
+      position: fixed;
+      top: 62px;
+      right: 0;
+      background: #121212ee;
+      height: calc(100vh - 62px);
+      width: 220px;
+      flex-direction: column;
+      gap: 2rem;
+      padding-top: 2rem;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      box-shadow: -4px 0 16px #00ffecbb;
+      border-left: 2px solid #00ffec;
+      z-index: 1200;
+      backdrop-filter: blur(6px);
+    }
+    nav ul.open {
+      transform: translateX(0);
+    }
+    .hamburger {
+      display: flex;
+    }
+  }
+
+  /* Hero with glow text and subtle background gradient */
+  .hero {
+    padding: 5rem 2rem 4rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, #0a1111, #121a1a 70%);
+    border-bottom: 3px solid #00ffe3;
+    position: relative;
+    z-index: 10;
+  }
+  .hero h2 {
+    font-size: 2.5rem;
+    color: #00ffee;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-shadow:
+      0 0 6px #00ffe3,
+      0 0 12px #00ffe3,
+      0 0 20px #00ffec;
+    letter-spacing: 0.05em;
+  }
+  .hero p {
+    font-size: 1.3rem;
+    max-width: 720px;
+    margin: 0 auto;
+    color: #a2fefe;
+    text-shadow: 0 0 12px #00ffe3aa;
+  }
+
+  /* Neon buttons for interactivity */
+  .neon-button {
+    background: transparent;
+    border: 2px solid #00ffec;
+    color: #00ffec;
+    padding: 0.7rem 1.6rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Orbitron', sans-serif;
+    transition:
+      box-shadow 0.3s ease,
+      color 0.3s ease,
+      background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  .neon-button:hover {
+    box-shadow:
+      0 0 8px #00ffe3,
+      0 0 15px #00ffec,
+      0 0 25px #00ffec,
+      0 0 40px #00ffecbb;
+    background-color: #00ffec11;
+    color: #00fffebb;
+  }
+
+  /* Games section */
+  .games-section {
+    max-width: 1024px;
+    margin: 4rem auto 5rem auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+  .games-section h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    color: #00ffec;
+    border-bottom: 3px solid #00ffec;
+    padding-bottom: 0.4rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-transform: uppercase;
+    filter: drop-shadow(0 0 8px #00ffecdd);
+  }
+  .game-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+    gap: 2.5rem;
+  }
+  .card {
+    background: #191919bb;
+    border: 2px solid #00ffec;
+    border-radius: 16px;
+    box-shadow: 0 0 18px #00ffec88;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 800px;
+    cursor: pointer;
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: scale(1.07) rotateY(8deg) rotateX(4deg);
+    box-shadow: 0 0 42px #00fffebb, 0 0 35px #00ffecaa inset;
+  }
+  .card img {
+    width: 100%;
+    border-bottom: 2px solid #00ffec;
+    object-fit: cover;
+    height: 180px;
+    transition: filter 0.3s ease;
+    border-radius: 14px 14px 0 0;
+  }
+  .card:hover img {
+    filter: brightness(1.25) saturate(1.3);
+  }
+  .card-content {
+    padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+    color: #a9f6f5;
+  }
+  .card-content h4 {
+    color: #00ffec;
+    margin-bottom: 0.6rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 0 6px #00ffe3bb;
+  }
+  .card-content p {
+    font-size: 1rem;
+    line-height: 1.5;
+    text-shadow: 0 0 4px #00ffecaa;
+  }
+  .card-content .btn-play {
+    display: inline-block;
+    margin-top: 1rem;
+    background: #00ffec;
+    color: #0a0a0a;
+    padding: 0.6rem 1.4rem;
+    border-radius: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.6s ease;
+    box-shadow: 0 0 12px #00ffe3cc;
+    border: none;
+  }
+  .card-content .btn-play:hover {
+    background: #00fffebb;
+    box-shadow: 0 0 30px #00fffebb, 0 0 25px #00ffec;
+    color: #050505;
+  }
+
+  /* About and contact sections with reveal fade-in effect */
+  section.about {
+    background: linear-gradient(135deg, #121a1a, #0a1111);
+    padding: 4rem 1.5rem 5rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto 4rem auto;
+    text-align: center;
+    border-radius: 14px;
+    box-shadow: 0 0 36px #00ffec88;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+  }
+  section.about.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  section.about h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    color: #00ffec;
+    margin-bottom: 1.3rem;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px #00ffecbb;
+  }
+  section.about p {
+    font-size: 1.1rem;
+    color: #bdefff;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 7px #00ffec88;
+  }
+
+  /* Footer with glow social icons */
+  footer {
+    background: #0a0a0a;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #008080cc;
+    font-size: 1rem;
+    border-top: 3px solid #00ffec;
+    user-select: none;
+  }
+  .social-icons {
+    margin: 1rem 0 1.2rem 0;
+  }
+  .social-icons a {
+    color: #00ffee;
+    margin: 0 1.8rem;
+    font-size: 1.8rem;
+    text-decoration: none;
+    transition: color 0.35s ease, transform 0.3s ease;
+    filter: drop-shadow(0 0 6px #00ffecaa);
+  }
+  .social-icons a:hover {
+    color: #00fffedd;
+    transform: scale(1.25);
+  }
+
+  /* News ticker */
+  .news-ticker {
+    background: #001f1f;
+    color: #00ffec;
+    font-family: 'Orbitron', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-top: 3px solid #00ffec;
+    border-bottom: 3px solid #00ffec;
+    padding: 0.75rem 0;
+    margin: 3rem 0 3.5rem 0;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-shadow: 0 0 9px #00ffecbb;
+    user-select: none;
+  }
+  .news-ticker span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 25s linear infinite;
+  }
+  @keyframes ticker {
+    0% {transform: translateX(0);}
+    100% {transform: translateX(-100%);}
+  }
+
+  /* Dark mode variant */
+  body.light-mode {
+    background: #e9eff1;
+    color: #0a0a0a;
+  }
+  body.light-mode header {
+    background: linear-gradient(90deg, #f0f6f9, #d4e8f2, #afe1f1);
+    color: #0c6ca9;
+    text-shadow: none;
+  }
+  body.light-mode nav {
+    background: #f5fafdcc;
+    border-bottom-color: #0c6ca9cc;
+  }
+  body.light-mode nav .logo,
+  body.light-mode nav ul li a {
+    color: #0c6ca9;
+    text-shadow: none;
+    box-shadow: none;
+  }
+  body.light-mode nav ul li a:hover,
+  body.light-mode nav ul li a.active {
+    background: #007acc55;
+    color: #004d99;
+    box-shadow: none;
+    animation: none;
+  }
+  body.light-mode .hero {
+    background: #e6f2f9;
+    border-bottom-color: #0c6ca9;
+  }
+  body.light-mode .hero h2 {
+    color: #045a8d;
+    text-shadow: none;
+  }
+  body.light-mode .hero p {
+    color: #104470;
+    text-shadow: none;
+  }
+  body.light-mode .games-section {
+    box-shadow: none;
+  }
+  body.light-mode .card {
+    background: #f9fafb;
+    border-color: #007acc;
+    box-shadow: 0 0 10px #007acc88;
+  }
+  body.light-mode .card-content h4 {
+    color: #007acc;
+    text-shadow: none;
+  }
+  body.light-mode .card-content p {
+    color: #135f92;
+    text-shadow: none;
+  }
+  body.light-mode footer {
+    background: #d2e5f3;
+    border-top-color: #007acc;
+    color: #007acccc;
+  }
+  body.light-mode .social-icons a {
+    color: #007acc;
+    filter: none;
+  }
+  body.light-mode .social-icons a:hover {
+    color: #004d99;
+  }
+
+  /* Light/dark toggle */
+  .mode-toggle {
+    position: fixed;
+    right: 20px;
+    top: 22px;
+    background: #00ffeccc;
+    color: #0a0a0a;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00fffebb;
+    font-size: 1.7rem;
+    user-select: none;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.4s ease;
+    z-index: 1500;
+  }
+  .mode-toggle:hover {
+    background-color: #00fffeb8;
+    color: #004447;
+    box-shadow: 0 0 30px #00ffecff;
+  }
+  .mode-toggle:active {
+    transform: scale(0.93);
+  }
+
+  /* Sound toggle */
+  .sound-toggle {
+    position: fixed;
+    right: 20px;
+    top: 80px;
+    background: #00ffeccc;
+    color: #0a0a0a;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00fffebb;
+    font-size: 1.5rem;
+    user-select: none;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.4s ease;
+    z-index: 1500;
+  }
+  .sound-toggle:hover {
+    background-color: #00fffeb8;
+    color: #004447;
+    box-shadow: 0 0 30px #00ffecff;
+  }
+  .sound-toggle:active {
+    transform: scale(0.93);
+  }
+
+  /*
+  Scroll fade in for sections and cards
+  */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+    will-change: opacity, transform;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Interactive scoreboard: minimal cool box */
+  .scoreboard {
+    background: #111f22cc;
+    border: 2px solid #00ffec;
+    max-width: 320px;
+    margin: 0 auto 3rem auto;
+    color: #00ffec;
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    box-shadow: 0 0 20px #00ffebe0 inset;
+    text-align: center;
+    user-select: none;
+  }
+  .scoreboard h4 {
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 6px #00ffeccc;
+  }
+  .scoreboard .score {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    margin-top: 0.3rem;
+  }
+  .scoreboard .update-btn {
+    margin-top: 1rem;
+  }
+
+  /* Tooltip for buttons */
+  .tooltip {
+    position: relative;
+    cursor: pointer;
+  }
+  .tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffecdd;
+    color: #0b0b0b;
+    padding: 0.25rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    user-select: none;
+    box-shadow: 0 0 12px #00ffecaa;
+    pointer-events: none;
+  }
+</style>
+<!-- Font Awesome kit for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<header data-text="GAMERS HUB">GAMERS HUB</header>
+
+<nav>
+  <div class="logo">GamersHub</div>
+  <ul id="nav-links">
+    <li><a href="#hero" class="active">Inicio</a></li>
+    <li><a href="#juegos">Juegos</a></li>
+    <li><a href="#scoreboard">Marcador</a></li>
+    <li><a href="#about">Sobre Nosotros</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" aria-label="Abrir menú de navegación" role="button" tabindex="0">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</nav>
+
+<section class="hero fade-in" id="hero" aria-label="Sección principal bienvenida">
+  <h2>¡Bienvenido a la comunidad gamer definitiva!</h2>
+  <p>Donde los juegos, la pasión y la estrategia se unen para crear la experiencia definitiva.</p>
+  <button class="neon-button tooltip" id="joinBtn" data-tooltip="Únete ahora a nuestra comunidad!">Únete Ahora</button>
+</section>
+
+<div class="news-ticker" aria-live="polite" aria-atomic="true">
+  <span>🔥 Noticias: Lanzamiento de "Cyber Quest" - Próximo torneo de eSports - Actualización del ranking semanal disponible - Nuevos skins exclusivos este mes! 🔥</span>
+</div>
+
+<section class="games-section fade-in" id="juegos" aria-label="Sección de juegos destacados">
+  <h3>Juegos Destacados</h3>
+  <div class="game-cards">
+    <div class="card fade-in" tabindex="0" role="article" aria-label="Juego Cyber Quest">
+      <img src="https://images.unsplash.com/photo-1606813909348-bc4c4d38843a?auto=format&fit=crop&w=600&q=80" alt="Cyber Quest" />
+      <div class="card-content">
+        <h4>Cyber Quest</h4>
+        <p>Aventura futurista de acción con gráficos impresionantes y jugabilidad inmersiva en un mundo cyberpunk.</p>
+        <button class="btn-play neon-button tooltip" data-tooltip="Juega Cyber Quest">Jugar</button>
+      </div>
+    </div>
+    <div class="card fade-in" tabindex="0" role="article" aria-label="Juego Shadow Hunters">
+      <img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=600&q=80" alt="Shadow Hunters" />
+      <div class="card-content">
+        <h4>Shadow Hunters</h4>
+        <p>Juego de estrategia táctica donde las sombras y sigilo definen la victoria en misiones complejas.</p>
+        <button class="btn-play neon-button tooltip" data-tooltip="Juega Shadow Hunters">Jugar</button>
+      </div>
+    </div>
+    <div class="card fade-in" tabindex="0" role="article" aria-label="Juego Epic Racers">
+      <img src="https://images.unsplash.com/photo-1533227268428-f9533e6b59c4?auto=format&fit=crop&w=600&q=80" alt="Epic Racers" />
+      <div class="card-content">
+        <h4>Epic Racers</h4>
+        <p>Velocidad extrema y competiciones al límite en circuitos locos con coches personalizables.</p>
+        <button class="btn-play neon-button tooltip" data-tooltip="Juega Epic Racers">Jugar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scoreboard fade-in" id="scoreboard" aria-label="Marcador interactivo">
+  <h4>Puntuación en Tiempo Real</h4>
+  <div class="score" id="scoreValue">0</div>
+  <button class="update-btn neon-button tooltip" id="incScoreBtn" data-tooltip="Incrementar puntuación">+</button>
+  <button class="update-btn neon-button tooltip" id="decScoreBtn" data-tooltip="Disminuir puntuación">-</button>
+  <button class="update-btn neon-button tooltip" id="resetScoreBtn" data-tooltip="Reiniciar puntuación">⟲</button>
+</section>
+
+<section class="about fade-in" id="about" aria-label="Sección sobre nosotros">
+  <h3>Sobre Nosotros</h3>
+  <p>Gamers Hub es una comunidad apasionada que conecta jugadores de todo el mundo. Compartimos las últimas noticias, consejos, y torneos para que disfrutes cada partida al máximo.</p>
+</section>
+
+<section class="about fade-in" id="contacto" aria-label="Sección de contacto">
+  <h3>Contacto</h3>
+  <p>¿Quieres unirte o tienes preguntas? Envíanos un correo a <a href="mailto:contacto@gamershub.com" style="color:#00ffec;">contacto@gamershub.com</a> (nota: solo ejemplo).</p>
+</section>
+
+<footer>
+  <div class="social-icons" role="navigation" aria-label="Redes sociales">
+    <a href="#" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+    <a href="#" title="Twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+    <a href="#" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="#" title="Twitch" aria-label="Twitch"><i class="fab fa-twitch"></i></a>
+  </div>
+  &copy; 2024 Gamers Hub. Todos los derechos reservados.
+</footer>
+
+<!-- Dark/light mode toggle -->
+<div class="mode-toggle" id="modeToggle" aria-label="Activar o desactivar modo claro" role="button" tabindex="0" title="Toggle modo claro/oscuro" aria-pressed="false" >
+  <i class="fas fa-sun"></i>
+</div>
+<!-- Sound toggle -->
+<div class="sound-toggle" id="soundToggle" aria-label="Activar o desactivar sonido" role="button" tabindex="0" title="Toggle sonidos" aria-pressed="true">
+  <i class="fas fa-volume-up"></i>
+</div>
+
+<script>
+  // Starfield effect for background
+  class Star {
+    constructor(canvasWidth, canvasHeight, ctx) {
+      this.canvasWidth = canvasWidth;
+      this.canvasHeight = canvasHeight;
+      this.ctx = ctx;
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * this.canvasWidth;
+      this.y = Math.random() * this.canvasHeight;
+      this.z = Math.random() * this.canvasWidth;
+      this.prevX = this.x;
+      this.prevY = this.y;
+      this.radius = 1 + Math.random() * 1.3;
+      this.speed = 0.6 + Math.random() * 1.2;
+    }
+    update() {
+      this.z -= this.speed;
+      if(this.z <= 0) {
+        this.reset();
+        this.z = this.canvasWidth;
+      }
+      // Calculate screen coords
+      this.prevX = this.x * (this.canvasWidth / this.z);
+      this.prevY = this.y * (this.canvasWidth / this.z);
+      this.screenX = (this.canvasWidth / 2) + this.x * (this.canvasWidth / this.z);
+      this.screenY = (this.canvasHeight / 2) + this.y * (this.canvasWidth / this.z);
+    }
+    draw() {
+      const ctx = this.ctx;
+      ctx.beginPath();
+      ctx.strokeStyle = '#00fffeb3';
+      ctx.lineWidth = this.radius;
+      ctx.moveTo(this.prevX, this.prevY);
+      ctx.lineTo(this.screenX, this.screenY);
+      ctx.stroke();
+    }
+  }
+  function initStarfield() {
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    const starsCount = 130;
+    const stars = [];
+    for(let i=0; i<starsCount; i++){
+      stars.push(new Star(width, height, ctx));
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,width,height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      stars.forEach(star => {
+        star.canvasWidth = width;
+        star.canvasHeight = height;
+      });
+    });
+  }
+  initStarfield();
+
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+  });
+  hamburger.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    }
+  });
+
+  // Smooth scroll and active link highlight
+  const links = navLinks.querySelectorAll('a');
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').slice(1);
+      const target = document.getElementById(targetId);
+      if(target){
+        window.scrollTo({
+          top: target.offsetTop - 58,
+          behavior: 'smooth'
+        });
+      }
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('open');
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+  window.addEventListener('scroll', () => {
+    let fromTop = window.scrollY + 60;
+    links.forEach(link => {
+      let section = document.querySelector(link.hash);
+      if(!section) return;
+      if(section.offsetTop <= fromTop && (section.offsetTop + section.offsetHeight) > fromTop){
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  });
+
+  // Fade in on scroll for fade-in elements
+  function revealOnScroll() {
+    const fadeIns = document.querySelectorAll('.fade-in');
+    const windowBottom = window.innerHeight + window.scrollY;
+    fadeIns.forEach(el => {
+      if(el.offsetTop < windowBottom - 80){
+        el.classList.add('visible');
+      }
+    });
+  }
+  window.addEventListener('scroll', revealOnScroll);
+  window.addEventListener('load', () => {
+    revealOnScroll();
+  });
+
+  // Dark/light mode toggle
+  const modeToggle = document.getElementById('modeToggle');
+  modeToggle.addEventListener('click', toggleMode);
+  modeToggle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMode();
+    }
+  });
+
+  function toggleMode(){
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    modeToggle.setAttribute('aria-pressed', isLight);
+    if(isLight) {
+      modeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    } else {
+      modeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+  }
+
+  // Sound toggle and sound effects on hover
+  const soundToggle = document.getElementById('soundToggle');
+  let soundEnabled = true;
+  soundToggle.addEventListener('click', toggleSound);
+  soundToggle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleSound();
+    }
+  });
+  function toggleSound(){
+    soundEnabled = !soundEnabled;
+    soundToggle.setAttribute('aria-pressed', soundEnabled);
+    if(soundEnabled){
+      soundToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+    } else {
+      soundToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    }
+  }
+
+  // Simple click sound on neon buttons
+  function playClickSound(){
+    if(!soundEnabled) return;
+    const audio = new Audio('https://freesound.org/data/previews/522/522029_5674464-lq.mp3');
+    audio.volume = 0.13;
+    audio.play().catch(()=>{});
+  }
+  document.querySelectorAll('.neon-button, .btn-play').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      if(soundEnabled){
+        const audioHover = new Audio('https://freesound.org/data/previews/256/256113_4486188-lq.mp3');
+        audioHover.volume = 0.08;
+        audioHover.play().catch(()=>{});
+      }
+    });
+    btn.addEventListener('click', () => {
+      playClickSound();
+    });
+  });
+
+  // Interactive scoreboard logic
+  const scoreValue = document.getElementById('scoreValue');
+  const incScoreBtn = document.getElementById('incScoreBtn');
+  const decScoreBtn = document.getElementById('decScoreBtn');
+  const resetScoreBtn = document.getElementById('resetScoreBtn');
+  let score = 0;
+
+  function updateScore() {
+    scoreValue.textContent = score;
+  }
+  incScoreBtn.addEventListener('click', () => {
+    score++;
+    updateScore();
+  });
+  decScoreBtn.addEventListener('click', () => {
+    if(score > 0) score--;
+    updateScore();
+  });
+  resetScoreBtn.addEventListener('click', () => {
+    score = 0;
+    updateScore();
+  });
+  updateScore();
+
+  // Join button interaction
+  const joinBtn = document.getElementById('joinBtn');
+  joinBtn.addEventListener('click', () => {
+    alert('¡Gracias por unirte a Gamers Hub! Próximamente más funciones exclusivas.');
+    playClickSound();
+  });
+</script>
+</body>
+</html>
+
